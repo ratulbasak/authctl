@@ -6,9 +6,11 @@ import (
 	"simply-go/service"
 )
 
-func SetupRouter(helloService *service.HelloService) *http.ServeMux {
+func SetupRouter(helloService *service.HelloService) http.Handler {
 	mux := http.NewServeMux()
 
 	InitializeRoutes(mux, helloService)
-	return mux
+	loggedMux := LoggingMiddleware(mux)
+
+	return loggedMux
 }
