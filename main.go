@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"simply-go/config"
+	"simply-go/router"
 	"simply-go/service"
 )
 
@@ -13,27 +14,13 @@ import (
 // }
 
 func main() {
-	fmt.Println("started!")
 	cfg := config.LoadConfig()
-	// message := hello{
-	// 	Message: "hello world",
-	// }
+
 	helloService := &service.HelloService{}
-	data, error := helloService.GetHello()
-	if error != nil {
-		fmt.Println("Internal Server Error")
-		return
-	}
-
-	mux := http.NewServeMux()
-
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.Write(data)
-	})
-
+	mux := router.SetupRouter(helloService)
+	fmt.Println("Server started on localhost:8080")
 	err := http.ListenAndServe(cfg.Port, mux)
 	if err != nil {
-		fmt.Println(err.Error())
+		fmt.Println("Error starting server:", err)
 	}
 }
